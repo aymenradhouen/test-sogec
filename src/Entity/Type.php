@@ -19,9 +19,6 @@ class Type
     #[ORM\Column(type: 'string',length: 15,nullable: true)]
     private $type2;
 
-    #[ORM\OneToMany(targetEntity: Pokemon::class, mappedBy: 'type')]
-    private $types;
-
     /**
      * @param $type1
      * @param $type2

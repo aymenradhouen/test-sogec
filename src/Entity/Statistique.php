@@ -34,15 +34,6 @@ class Statistique
     #[ORM\Column(type: 'integer',length: 5)]
     private $speed;
 
-    #[ORM\Column(type: 'integer',length: 5)]
-    private $generation;
-
-    #[ORM\Column(type: 'boolean')]
-    private $legendary;
-
-    #[ORM\OneToMany(targetEntity: Pokemon::class, mappedBy: 'statistique')]
-    private $statistiques;
-
     /**
      * @param $total
      * @param $hp
@@ -51,10 +42,8 @@ class Statistique
      * @param $spAtk
      * @param $spDef
      * @param $speed
-     * @param $generation
-     * @param $legendary
      */
-    public function __construct($total, $hp, $attack, $defense, $spAtk, $spDef, $speed, $generation, $legendary)
+    public function __construct($total, $hp, $attack, $defense, $spAtk, $spDef, $speed)
     {
         $this->total = $total;
         $this->hp = $hp;
@@ -63,8 +52,6 @@ class Statistique
         $this->spAtk = $spAtk;
         $this->spDef = $spDef;
         $this->speed = $speed;
-        $this->generation = $generation;
-        $this->legendary = $legendary;
     }
 
 
@@ -183,54 +170,6 @@ class Statistique
     public function setSpeed($speed): void
     {
         $this->speed = $speed;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getGeneration()
-    {
-        return $this->generation;
-    }
-
-    /**
-     * @param mixed $generation
-     */
-    public function setGeneration($generation): void
-    {
-        $this->generation = $generation;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLegendary()
-    {
-        return $this->legendary;
-    }
-
-    /**
-     * @param mixed $legendary
-     */
-    public function setLegendary($legendary): void
-    {
-        $this->legendary = $legendary;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStatistiques()
-    {
-        return $this->statistiques;
-    }
-
-    /**
-     * @param mixed $statistiques
-     */
-    public function setStatistiques($statistiques): void
-    {
-        $this->statistiques = $statistiques;
     }
 
 

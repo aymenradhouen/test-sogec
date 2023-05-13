@@ -112,9 +112,7 @@ class ImportCsvToDatabaseCommand extends Command
                         'defense' => $row[$defense],
                         'spAtk' => $row[$spAtk],
                         'spDef' => $row[$spDef],
-                        'speed' => $row[$speed],
-                        'generation' => $row[$generation],
-                        'legendary' => !($row[$legendary] == 'False')
+                        'speed' => $row[$speed]
                     ]);
                     if(!$statistique){
                         $statistique = new Statistique(
@@ -124,9 +122,7 @@ class ImportCsvToDatabaseCommand extends Command
                             $row[$defense],
                             $row[$spAtk],
                             $row[$spDef],
-                            $row[$speed],
-                            $row[$generation],
-                            !($row[$legendary] == 'False')
+                            $row[$speed]
                         );
                         $this->em->getRepository(Statistique::class)->add($statistique);
                     }
@@ -134,14 +130,17 @@ class ImportCsvToDatabaseCommand extends Command
                     $pokemon = $this->em->getRepository(Pokemon::class)->findOneBy([
                         'name' => $row[$name],
                         'type' => $type,
-                        'statistique' => $statistique
+                        'statistique' => $statistique,
+                        'generation' => $row[$generation],
+                        'legendary' => !($row[$legendary] == 'False')
                     ]);
                     if(!$pokemon){
                         $pokemon = new Pokemon(
                             $row[$name],
-                            $type1,
-                            $type2,
-                            $statistique
+                            $type,
+                            $statistique,
+                            $row[$generation],
+                            !($row[$legendary] == 'False')
                         );
                     }
                     $this->em->getRepository(Pokemon::class)->add($pokemon);

@@ -3,11 +3,28 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\PokemonRepository;
+use App\State\PokemonState;
+use App\State\PokemonStateProvider;
+use App\State\UserPasswordHasher;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(provider: PokemonStateProvider::class),
+        new Get(provider: PokemonStateProvider::class),
+        new Put(),
+        new Patch(),
+    ],
+    paginationItemsPerPage: 50,
+)]
 class Pokemon
 {
     #[ORM\Id]
@@ -18,23 +35,30 @@ class Pokemon
     #[ORM\Column(type: 'string',length: 50)]
     private $name;
 
-    #[ORM\ManyToOne(targetEntity: Type::class, inversedBy: 'types')]
+    #[ORM\ManyToOne(targetEntity: Type::class)]
     private $type;
 
-    #[ORM\ManyToOne(targetEntity: Statistique::class, inversedBy: 'statistiques')]
+    #[ORM\ManyToOne(targetEntity: Statistique::class)]
     private $statistique;
+
+    #[ORM\Column(type: 'integer',length: 5)]
+    private $generation;
+
+    #[ORM\Column(type: 'boolean')]
+    private $legendary;
+
 
     /**
      * @param $name
-     * @param $type1
-     * @param $type2
      * @param $statistique
      */
-    public function __construct($name, $type1, $type2, $statistique)
+    public function __construct($name, $type, $statistique, $generation, $legendary)
     {
         $this->name = $name;
-
+        $this->type = $type;
         $this->statistique = $statistique;
+        $this->generation = $generation;
+        $this->legendary = $legendary;
     }
 
 
@@ -62,145 +86,33 @@ class Pokemon
     /**
      * @return mixed
      */
-    public function getType1()
+    public function getType()
     {
-        return $this->type1;
+        return $this->type;
     }
 
     /**
-     * @param mixed $type1
+     * @param mixed $type
      */
-    public function setType1($type1): void
+    public function setType($type): void
     {
-        $this->type1 = $type1;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getType2()
-    {
-        return $this->type2;
-    }
-
-    /**
-     * @param mixed $type2
-     */
-    public function setType2($type2): void
-    {
-        $this->type2 = $type2;
+        $this->type = $type;
     }
 
     /**
      * @return mixed
      */
-    public function getTotal()
+    public function getStatistique()
     {
-        return $this->total;
+        return $this->statistique;
     }
 
     /**
-     * @param mixed $total
+     * @param mixed $statistique
      */
-    public function setTotal($total): void
+    public function setStatistique($statistique): void
     {
-        $this->total = $total;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getHp()
-    {
-        return $this->hp;
-    }
-
-    /**
-     * @param mixed $hp
-     */
-    public function setHp($hp): void
-    {
-        $this->hp = $hp;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAttack()
-    {
-        return $this->attack;
-    }
-
-    /**
-     * @param mixed $attack
-     */
-    public function setAttack($attack): void
-    {
-        $this->attack = $attack;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDefense()
-    {
-        return $this->defense;
-    }
-
-    /**
-     * @param mixed $defense
-     */
-    public function setDefense($defense): void
-    {
-        $this->defense = $defense;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSpAtk()
-    {
-        return $this->spAtk;
-    }
-
-    /**
-     * @param mixed $spAtk
-     */
-    public function setSpAtk($spAtk): void
-    {
-        $this->spAtk = $spAtk;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSpDef()
-    {
-        return $this->spDef;
-    }
-
-    /**
-     * @param mixed $spDef
-     */
-    public function setSpDef($spDef): void
-    {
-        $this->spDef = $spDef;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSpeed()
-    {
-        return $this->speed;
-    }
-
-    /**
-     * @param mixed $speed
-     */
-    public function setSpeed($speed): void
-    {
-        $this->speed = $speed;
+        $this->statistique = $statistique;
     }
 
     /**
@@ -235,21 +147,6 @@ class Pokemon
         $this->legendary = $legendary;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getStatistique()
-    {
-        return $this->statistique;
-    }
-
-    /**
-     * @param mixed $statistique
-     */
-    public function setStatistique($statistique): void
-    {
-        $this->statistique = $statistique;
-    }
 
 
 }

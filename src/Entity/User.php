@@ -10,8 +10,8 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
+use App\State\UserPasswordHasher;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -51,20 +51,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[Assert\NotBlank(groups: ['user:create'])]
-    #[Assert\AtLeastOneOf([
-        new Assert\Regex(
-            pattern: '/[a-z]/',
-            message: 'Le mot de passe doit comporter au minimum une minuscule'),
-        new Assert\Regex(
-            pattern: '/[A-Z]/',
-            message: 'Le mot de passe doit comporter au minimum une majuscule'),
-        new Assert\Regex(
-            pattern: '/[#?!@$%^&*-]+/i',
-            message: 'Le mot de passe doit comporter au minimum un caractère spécial'),
-    ])]
+    #[Assert\Regex(
+        pattern: '/[a-z]/',
+        message: 'Le mot de passe doit comporter au minimum une minuscule'
+    )]
+    #[Assert\Regex(
+        pattern: '/[A-Z]/',
+        message: 'Le mot de passe doit comporter au minimum une majuscule',
+    )]
+    #[Assert\Regex(
+        pattern: '/[#?!@$%^&*-]+/i',
+        message: 'Le mot de passe doit comporter au minimum un caractère spécial',
+    )]
     #[Assert\Length(
         min: 8,
-        minMessage: 'Le mot de passe doit comporter au minimum 8 caractères, une majuscule, une miniscule et un caractère spécial',
+        minMessage: 'Le mot de passe doit comporter au minimum 8 caractères',
     )]
     #[Groups(['user:create', 'user:update'])]
     #[ORM\Column(type: 'string')]
