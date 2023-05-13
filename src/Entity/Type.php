@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\TypeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TypeRepository::class)]
 class Type
@@ -13,9 +14,11 @@ class Type
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    #[Groups(['pokemon:update'])]
     #[ORM\Column(type: 'string',length: 15)]
     private $type1;
 
+    #[Groups(['pokemon:update'])]
     #[ORM\Column(type: 'string',length: 15,nullable: true)]
     private $type2;
 

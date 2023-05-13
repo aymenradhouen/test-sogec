@@ -2,29 +2,38 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\PokemonRepository;
-use App\State\PokemonState;
+use App\State\PokemonStateProcessor;
 use App\State\PokemonStateProvider;
-use App\State\UserPasswordHasher;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(provider: PokemonStateProvider::class),
         new Get(provider: PokemonStateProvider::class),
-        new Put(),
-        new Patch(),
+        new Put(processor: PokemonStateProcessor::class),
+        new Delete(processor: PokemonStateProcessor::class),
     ],
-    paginationItemsPerPage: 50,
+    denormalizationContext: ['groups' => ['pokemon:update']],
+    paginationClientItemsPerPage: 50,
+    paginationItemsPerPage: 50
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'name' => SearchFilter::STRATEGY_PARTIAL,
+    'type.type1' => SearchFilter::STRATEGY_PARTIAL,
+    'generation' => SearchFilter::STRATEGY_PARTIAL,
+])]
 class Pokemon
 {
     #[ORM\Id]
@@ -32,18 +41,23 @@ class Pokemon
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    #[Groups(['pokemon:update'])]
     #[ORM\Column(type: 'string',length: 50)]
     private $name;
 
+    #[Groups(['pokemon:update'])]
     #[ORM\ManyToOne(targetEntity: Type::class)]
     private $type;
 
     #[ORM\ManyToOne(targetEntity: Statistique::class)]
     private $statistique;
 
-    #[ORM\Column(type: 'integer',length: 5)]
+    #[Groups(['pokemon:update'])]
+    #[ORM\Column(type: 'integer')]
     private $generation;
 
+    #[Groups(['pokemon:update'])]
+    #[ApiFilter(BooleanFilter::class)]
     #[ORM\Column(type: 'boolean')]
     private $legendary;
 

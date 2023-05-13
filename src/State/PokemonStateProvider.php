@@ -7,6 +7,8 @@ use ApiPlatform\State\ProviderInterface;
 use App\Entity\Pokemon;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class PokemonStateProvider implements ProviderInterface
 {
@@ -32,9 +34,9 @@ class PokemonStateProvider implements ProviderInterface
             }
         } else {
             if($this->security->getUser()){
-                return $this->em->getRepository(Pokemon::class)->findAll();
+                return $this->em->getRepository(Pokemon::class)->findBy([],[],$uriVariables['itemsPerPage'],$uriVariables['itemsPerPage']*($uriVariables['page']-1));
             } else {
-                return $this->em->getRepository(Pokemon::class)->findBy(['legendary' => false]);
+                return $this->em->getRepository(Pokemon::class)->findBy(['legendary' => false],[],$uriVariables['itemsPerPage'],$uriVariables['itemsPerPage']*($uriVariables['page']-1));
             }
         }
     }
