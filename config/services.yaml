@@ -30,3 +30,8 @@ services:
         bind:
             $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
             $removeProcessor: '@api_platform.doctrine.orm.state.remove_processor'
+
+    App\State\PokemonStateProvider:
+        bind:
+            $itemProvider: '@api_platform.doctrine.orm.state.item_provider'
+            $collectionProvider: '@api_platform.doctrine.orm.state.collection_provider'

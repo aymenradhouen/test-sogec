@@ -20,19 +20,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(),
-        new Post(processor: UserPasswordHasher::class, validationContext: ['groups' => ['Default', 'user:create']]),
-        new Get(),
-        new Put(processor: UserPasswordHasher::class),
-        new Patch(processor: UserPasswordHasher::class),
-        new Delete(),
+        new Post(processor: UserPasswordHasher::class, validationContext: ['groups' => ['Default', 'user:create']])
     ],
-    normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:create', 'user:update']],
+    denormalizationContext: ['groups' => ['user:create']],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[Groups(['user:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -42,7 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email(
         message: 'Mail not valid.',
     )]
-    #[Groups(['user:read', 'user:create', 'user:update'])]
+    #[Groups(['user:create'])]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     private $email;
 
@@ -67,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         min: 8,
         minMessage: 'Le mot de passe doit comporter au minimum 8 caractères',
     )]
-    #[Groups(['user:create', 'user:update'])]
+    #[Groups(['user:create'])]
     #[ORM\Column(type: 'string')]
     private $password;
 

@@ -22,18 +22,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new GetCollection(provider: PokemonStateProvider::class),
         new Get(provider: PokemonStateProvider::class),
-        new Put(processor: PokemonStateProcessor::class),
-        new Delete(processor: PokemonStateProcessor::class),
+        new Put(security: 'is_granted("ROLE_USER")',processor: PokemonStateProcessor::class),
+        new Delete(security: 'is_granted("ROLE_USER")',processor: PokemonStateProcessor::class),
     ],
     denormalizationContext: ['groups' => ['pokemon:update']],
     paginationClientItemsPerPage: 50,
     paginationItemsPerPage: 50
 )]
-#[ApiFilter(SearchFilter::class, properties: [
-    'name' => SearchFilter::STRATEGY_PARTIAL,
-    'type.type1' => SearchFilter::STRATEGY_PARTIAL,
-    'generation' => SearchFilter::STRATEGY_PARTIAL,
-])]
 class Pokemon
 {
     #[ORM\Id]
@@ -42,10 +37,12 @@ class Pokemon
     private $id;
 
     #[Groups(['pokemon:update'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     #[ORM\Column(type: 'string',length: 50)]
     private $name;
 
     #[Groups(['pokemon:update'])]
+    #[ApiFilter(SearchFilter::class, properties: ['type.type1' => 'ipartial', 'type.type2' => 'ipartial'])]
     #[ORM\ManyToOne(targetEntity: Type::class)]
     private $type;
 
@@ -53,6 +50,7 @@ class Pokemon
     private $statistique;
 
     #[Groups(['pokemon:update'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     #[ORM\Column(type: 'integer')]
     private $generation;
 
@@ -62,11 +60,7 @@ class Pokemon
     private $legendary;
 
 
-    /**
-     * @param $name
-     * @param $statistique
-     */
-    public function __construct($name, $type, $statistique, $generation, $legendary)
+    public function __construct($name = null, $type = null, $statistique = null, $generation = null, $legendary = null)
     {
         $this->name = $name;
         $this->type = $type;

@@ -29,18 +29,15 @@ class PokemonStateProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        if($this->security->getUser()){
-            if ($operation instanceof DeleteOperationInterface) {
-                if(!$data->getLegendary()) {
-                    return $this->removeProcessor->process($data, $operation, $uriVariables, $context);
-                }
-            }
-            $type = $this->em->getRepository(Type::class)->findOneBy(['type1' => $data->getType()->getType1(),'type2' => $data->getType()->getType2()]);
-            if($type){
-                $data->setType($type);
-                return $this->persistProcessor->process($data, $operation, $uriVariables, $context);
+        if ($operation instanceof DeleteOperationInterface) {
+            if(!$data->getLegendary()) {
+                return $this->removeProcessor->process($data, $operation, $uriVariables, $context);
             }
         }
-
+        $type = $this->em->getRepository(Type::class)->findOneBy(['type1' => $data->getType()->getType1(),'type2' => $data->getType()->getType2()]);
+        if($type){
+            $data->setType($type);
+            return $this->persistProcessor->process($data, $operation, $uriVariables, $context);
+        }
     }
 }
