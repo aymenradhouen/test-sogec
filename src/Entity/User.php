@@ -20,7 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
     operations: [
-        new Post(processor: UserPasswordHasher::class, validationContext: ['groups' => ['Default', 'user:create']])
+        new GetCollection(),
+        new Post(validationContext: ['groups' => ['Default', 'user:create']], processor: UserPasswordHasher::class)
     ],
     denormalizationContext: ['groups' => ['user:create']],
 )]

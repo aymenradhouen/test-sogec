@@ -18,8 +18,10 @@ framework:
     php_errors:
         log: true
 
-when@test:
-    framework:
-        test: true
-        session:
-            storage_factory_id: session.storage.factory.mock_file
+    http_client:
+        scoped_clients:
+            auth_api:
+                base_uri: 'http://localhost:8000/auth'
+
+                # HTTP Basic authentication
+                auth_basic: 'aymen@gmail.com:12345678aA@'
