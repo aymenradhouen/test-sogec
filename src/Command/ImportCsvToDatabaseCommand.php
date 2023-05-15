@@ -37,6 +37,7 @@ class ImportCsvToDatabaseCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $filepath = $input->getArgument('filepath');
 
+        //Verification du fichier si il est un CSV et si le fichier existe
         if ($filepath) {
             $ext = pathinfo($filepath, PATHINFO_EXTENSION);
             if(!file_exists($filepath)){
@@ -50,6 +51,7 @@ class ImportCsvToDatabaseCommand extends Command
             if (($fp = fopen($filepath, "r")) !== FALSE) {
                 while (($row = fgetcsv($fp, 1000, ",")) !== FALSE) {
                     $rowNum++;
+                    //Verification de l'emplacement des colonnes du CSV pour que l'ordre des colonnes n'impacte pas l'import
                     if($rowNum == 1){
                         foreach ($row as $key => $data){
                             switch ($data){
@@ -93,6 +95,7 @@ class ImportCsvToDatabaseCommand extends Command
                         }
                         continue;
                     }
+                    //Verification du type si il existe sinon on fait sa creation
                     $type = $this->em->getRepository(\App\Entity\Type::class)->findOneBy([
                         'type1' => $row[$type1],
                         'type2' => $row[$type2]
@@ -101,6 +104,7 @@ class ImportCsvToDatabaseCommand extends Command
                         $type = new \App\Entity\Type($row[$type1],$row[$type2]);
                         $this->em->getRepository(\App\Entity\Type::class)->add($type);
                     }
+                    //Verification des statistiques si ils existent sinon on fait leur creations
 
                     $statistique = $this->em->getRepository(Statistique::class)->findOneBy([
                         'total' =>  $row[$total],
@@ -124,6 +128,7 @@ class ImportCsvToDatabaseCommand extends Command
                         $this->em->getRepository(Statistique::class)->add($statistique);
                     }
 
+                    //Verification du pokemon si il existe sinon on fait sa creation
                     $pokemon = $this->em->getRepository(Pokemon::class)->findOneBy([
                         'name' => $row[$name],
                         'type' => $type,
